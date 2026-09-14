@@ -680,14 +680,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="metaculus/openai/deepseek-v4-flash",
+                model="metaculus/gpt-4o",
                 temperature=0.3,
                 timeout=120,
                 allowed_tries=2,
             ),
-            "summarizer": "metaculus/openai/deepseek-v4-flash",
-            "researcher": "metaculus/openai/deepseek-v4-flash",
-            "parser": "metaculus/openai/deepseek-v4-flash",
+            "summarizer": "metaculus/gpt-4o",
+            "researcher": "metaculus/gpt-4o",
+            "parser": "metaculus/gpt-4o",
         },
     )
 
