@@ -22,7 +22,8 @@ optional = true
 
 [tool.poetry.group.integrations.dependencies]
 lightningrod-ai = "^0.1.14"
-metaculus-bot-review = "^0.1.1"
+# metaculus-bot-review removed 2026-09-14: pins forecasting-tools <0.3.0, conflicts
+# with the Fall-season bump. Re-add when upstream releases a 0.3-compatible version.
 
 
 [tool.poetry.group.dev.dependencies]
