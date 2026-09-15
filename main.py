@@ -655,7 +655,7 @@ class RateLimitedBot(SummerTemplateBot2026):
     `max_concurrent_questions` at a time.
     """
 
-    max_concurrent_questions: int = 2
+    max_concurrent_questions: int = 1
 
     async def forecast_questions(
         self,
@@ -737,19 +737,19 @@ if __name__ == "__main__":
                 model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=4,
+                allowed_tries=2,
             ),
             "summarizer": GeneralLlm(
                 model="groq/openai/gpt-oss-20b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=4,
+                allowed_tries=2,
             ),
             "researcher": GeneralLlm(
                 model="groq/qwen/qwen3.8-27b",
                 temperature=0.2,
                 timeout=300,
-                allowed_tries=4,
+                allowed_tries=2,
             ),
             "parser": GeneralLlm(
                 # shares qwen's pool with the researcher (both light calls);
@@ -757,7 +757,7 @@ if __name__ == "__main__":
                 model="groq/qwen/qwen3.8-27b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=4,
+                allowed_tries=2,
             ),
         },
     )
