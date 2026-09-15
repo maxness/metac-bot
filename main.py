@@ -752,7 +752,9 @@ if __name__ == "__main__":
                 allowed_tries=4,
             ),
             "parser": GeneralLlm(
-                model="groq/openai/gpt-oss-120b",
+                # shares qwen's pool with the researcher (both light calls);
+                # keeps gpt-oss-120b exclusive to the 2 prediction calls.
+                model="groq/qwen/qwen3.8-27b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=4,
