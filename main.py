@@ -728,9 +728,11 @@ if __name__ == "__main__":
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
         llms={
-            # Groq free tier: TPM pools are PER MODEL, so each role draws its
-            # own pool. compound-mini's agentic loop additionally burns the
-            # llama-3.3-70b pool internally (12k TPM org-wide).
+            # Groq free tier: TPM pools are PER MODEL (8k each, llama pool 12k).
+            # compound-mini is banned here: its agentic loop burns the shared
+            # llama-3.3-70b pool even when research runs 1-at-a-time.
+            # Prompts are small (summary mode + slim researcher prompt), so
+            # plain models on separate pools fit.
             "default": GeneralLlm(
                 model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
@@ -738,19 +740,19 @@ if __name__ == "__main__":
                 allowed_tries=4,
             ),
             "summarizer": GeneralLlm(
-                model="groq/qwen/qwen3.8-27b",
+                model="groq/openai/gpt-oss-20b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=4,
             ),
             "researcher": GeneralLlm(
-                model="groq/groq/compound-mini",
+                model="groq/qwen/qwen3.8-27b",
                 temperature=0.2,
                 timeout=300,
                 allowed_tries=4,
             ),
             "parser": GeneralLlm(
-                model="groq/openai/gpt-oss-20b",
+                model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=4,
