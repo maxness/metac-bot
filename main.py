@@ -2,7 +2,7 @@ import argparse
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Literal
+from typing import Literal, Sequence
 
 import dotenv
 
@@ -20,6 +20,7 @@ from forecasting_tools import (
     AskNewsSearcher,
     BinaryQuestion,
     ForecastBot,
+    ForecastReport,
     GeneralLlm,
     MetaculusClient,
     MetaculusQuestion,
@@ -646,6 +647,54 @@ class SummerTemplateBot2026(ForecastBot):
         )
 
 
+class RateLimitedBot(SummerTemplateBot2026):
+    """
+    Same bot, but bounds question concurrency so the Groq free tier's tiny
+    per-model token pools (8k-12k TPM) aren't blown by parallel forecasts.
+    Base class gathers ALL questions at once; this runs at most
+    `max_concurrent_questions` at a time.
+    """
+
+    max_concurrent_questions: int = 2
+
+    async def forecast_questions(
+        self,
+        questions: Sequence[MetaculusQuestion],
+        return_exceptions: bool = False,
+    ) -> list[ForecastReport] | list[ForecastReport | BaseException]:
+        if self.skip_previously_forecasted_questions:
+            unforecasted_questions = [
+                question for question in questions if not question.already_forecasted
+            ]
+            if len(questions) != len(unforecasted_questions):
+                logger.info(
+                    f"Skipping {len(questions) - len(unforecasted_questions)} previously forecasted questions"
+                )
+            questions = unforecasted_questions
+
+        semaphore = asyncio.Semaphore(self.max_concurrent_questions)
+
+        async def run_one(question: MetaculusQuestion):
+            async with semaphore:
+                return await self._run_individual_question_with_error_propagation(
+                    question
+                )
+
+        reports: list[ForecastReport | BaseException] = await asyncio.gather(
+            *[run_one(question) for question in questions],
+            return_exceptions=return_exceptions,
+        )
+        if self.folder_to_save_reports_to:
+            non_exception_reports = [
+                report for report in reports if not isinstance(report, BaseException)
+            ]
+            file_path = self._create_file_path_to_save_to(list(questions))
+            ForecastReport.save_object_list_to_file_path(
+                non_exception_reports, file_path
+            )
+        return reports
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
@@ -670,7 +719,7 @@ if __name__ == "__main__":
     # Configure the bot. The `llms=` block below is commented out to use
     # whichever default models forecasting-tools picks based on your env vars;
     # uncomment and edit to pin specific models.
-    template_bot = SummerTemplateBot2026(
+    template_bot = RateLimitedBot(
         research_reports_per_question=1,
         predictions_per_research_report=2,  # was 5 — fit OpenRouter free tier's 50 req/day cap
         use_research_summary_to_forecast=False,
@@ -679,31 +728,32 @@ if __name__ == "__main__":
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
         llms={
+            # Groq free tier: TPM pools are PER MODEL, so each role draws its
+            # own pool. compound-mini's agentic loop additionally burns the
+            # llama-3.3-70b pool internally (12k TPM org-wide).
             "default": GeneralLlm(
-                model="groq/groq/compound-mini",
+                model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=2,
+                allowed_tries=4,
             ),
             "summarizer": GeneralLlm(
-                model="groq/groq/compound-mini",
+                model="groq/qwen/qwen3.8-27b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=2,
+                allowed_tries=4,
             ),
             "researcher": GeneralLlm(
-                # Groq's agentic model family: 70k tokens/min free tier vs 8k on
-                # the gpt-oss models (which also 413 on big prompts).
                 model="groq/groq/compound-mini",
                 temperature=0.2,
                 timeout=300,
-                allowed_tries=2,
+                allowed_tries=4,
             ),
             "parser": GeneralLlm(
-                model="groq/groq/compound-mini",
+                model="groq/openai/gpt-oss-20b",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=2,
+                allowed_tries=4,
             ),
         },
     )
