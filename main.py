@@ -664,7 +664,7 @@ if __name__ == "__main__":
     run_mode: Literal["tournament", "metaculus_cup", "test_questions"] = args.mode
 
     check_environment(strict=True)
-    publish_to_metaculus = False  # DRY RUN — set True to submit real forecasts
+    publish_to_metaculus = True  # LIVE — real forecasts submitted (was dry-run since fork)
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
 
     # Configure the bot. The `llms=` block below is commented out to use
@@ -680,14 +680,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="metaculus/gpt-4o",
+                model="openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                 temperature=0.3,
-                timeout=120,
+                timeout=180,
                 allowed_tries=2,
             ),
-            "summarizer": "metaculus/gpt-4o",
-            "researcher": "metaculus/gpt-4o",
-            "parser": "metaculus/gpt-4o",
+            "summarizer": "openrouter/google/gemma-4-31b-it:free",
+            "researcher": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+            "parser": "openrouter/google/gemma-4-31b-it:free",
         },
     )
 
