@@ -685,9 +685,24 @@ if __name__ == "__main__":
                 timeout=180,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
-            "researcher": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-            "parser": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+            "summarizer": GeneralLlm(
+                model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+                temperature=0.3,
+                timeout=180,
+                allowed_tries=3,
+            ),
+            "researcher": GeneralLlm(
+                model="openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+                temperature=0.2,
+                timeout=300,
+                allowed_tries=3,
+            ),
+            "parser": GeneralLlm(
+                model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+                temperature=0.3,
+                timeout=180,
+                allowed_tries=3,
+            ),
         },
     )
 
