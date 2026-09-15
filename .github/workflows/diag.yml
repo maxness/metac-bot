@@ -1,0 +1,14 @@
+name: Secret Diagnostics
+on: workflow_dispatch
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "len=${#GROQ_API_KEY}"
+          echo "prefix=${GROQ_API_KEY:0:4}"
+          echo "suffix=${GROQ_API_KEY: -4}"
+          echo "sha=$(echo -n "$GROQ_API_KEY" | sha256sum | cut -c1-16)"
