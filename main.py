@@ -685,9 +685,9 @@ if __name__ == "__main__":
                 timeout=180,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/google/gemma-4-31b-it:free",
+            "summarizer": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
             "researcher": "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-            "parser": "openrouter/google/gemma-4-31b-it:free",
+            "parser": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
         },
     )
 
