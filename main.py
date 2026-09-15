@@ -672,7 +672,7 @@ if __name__ == "__main__":
     # uncomment and edit to pin specific models.
     template_bot = SummerTemplateBot2026(
         research_reports_per_question=1,
-        predictions_per_research_report=5,
+        predictions_per_research_report=2,  # was 5 — fit OpenRouter free tier's 50 req/day cap
         use_research_summary_to_forecast=False,
         publish_reports_to_metaculus=publish_to_metaculus,
         folder_to_save_reports_to=None,
@@ -689,19 +689,19 @@ if __name__ == "__main__":
                 model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=3,
+                allowed_tries=2,
             ),
             "researcher": GeneralLlm(
                 model="openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
                 temperature=0.2,
                 timeout=300,
-                allowed_tries=3,
+                allowed_tries=2,
             ),
             "parser": GeneralLlm(
                 model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
                 temperature=0.3,
                 timeout=180,
-                allowed_tries=3,
+                allowed_tries=2,
             ),
         },
     )
