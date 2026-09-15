@@ -722,7 +722,7 @@ if __name__ == "__main__":
     template_bot = RateLimitedBot(
         research_reports_per_question=1,
         predictions_per_research_report=2,  # was 5 — fit OpenRouter free tier's 50 req/day cap
-        use_research_summary_to_forecast=False,
+        use_research_summary_to_forecast=True,  # predictions consume the short summary, not the full report (Groq TPM)
         publish_reports_to_metaculus=publish_to_metaculus,
         folder_to_save_reports_to=None,
         skip_previously_forecasted_questions=True,
