@@ -680,25 +680,27 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+                model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
             ),
             "summarizer": GeneralLlm(
-                model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+                model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
             ),
             "researcher": GeneralLlm(
-                model="openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
+                # Groq's agentic model: 70k tokens/min free tier vs 8k on the
+                # gpt-oss models — fits the researcher's fat prompts.
+                model="groq/groq/compound-mini",
                 temperature=0.2,
                 timeout=300,
                 allowed_tries=2,
             ),
             "parser": GeneralLlm(
-                model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+                model="groq/openai/gpt-oss-120b",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
