@@ -680,27 +680,27 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="groq/openai/gpt-oss-120b",
+                model="groq/groq/compound-mini",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
             ),
             "summarizer": GeneralLlm(
-                model="groq/openai/gpt-oss-120b",
+                model="groq/groq/compound-mini",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
             ),
             "researcher": GeneralLlm(
-                # Groq's agentic model: 70k tokens/min free tier vs 8k on the
-                # gpt-oss models — fits the researcher's fat prompts.
+                # Groq's agentic model family: 70k tokens/min free tier vs 8k on
+                # the gpt-oss models (which also 413 on big prompts).
                 model="groq/groq/compound-mini",
                 temperature=0.2,
                 timeout=300,
                 allowed_tries=2,
             ),
             "parser": GeneralLlm(
-                model="groq/openai/gpt-oss-120b",
+                model="groq/groq/compound-mini",
                 temperature=0.3,
                 timeout=180,
                 allowed_tries=2,
