@@ -750,6 +750,11 @@ if __name__ == "__main__":
                 temperature=0.2,
                 timeout=300,
                 allowed_tries=4,
+                # Groq OTPM cap on qwen3.8-27b is 1000 output tokens/minute;
+                # litellm's default expected-output (1903) trips a hard
+                # "request too large" 413. Cap it under the limit so throttling
+                # degrades to a retryable 429 instead of a fatal error.
+                max_tokens=900,
             ),
             "parser": GeneralLlm(
                 model="groq/openai/gpt-oss-120b",
